@@ -44,9 +44,9 @@
         "no-template-curly-in-string": [
             "error"
         ],
-        "require-jsdoc": [
-            "warn"
-        ],
+        // "require-jsdoc": [
+        //     "warn"
+        // ],
         "implicit-arrow-linebreak": [
             "warn",
             "beside"

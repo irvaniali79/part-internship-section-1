@@ -10,7 +10,12 @@ const database = {
     port:5432,
     schema:"testdb",
 };
-
+const redis = {
+    Client:{
+        url:'redis://localhost:6379',
+    },
+    selectDB:0
+}
 const router = {
   eventName: "event",
 }
@@ -38,6 +43,7 @@ module.exports = {
     apps,
     root,
     database,
+    redis,
     router,
     storage,
     server,
