@@ -1,0 +1,21 @@
+{
+  "name": "brogrammersframework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "node ."
+  },
+  "author": "irvaniali79",
+  "license": "ISC",
+  "dependencies": {
+    "brogrammers": "^2.0.0",
+    "brogrammers_logger": "^3.0.0",
+    "eventemitter3": "^4.0.7",
+    "redis": "^4.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.28.0"
+  }
+}

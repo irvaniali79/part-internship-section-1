@@ -1,0 +1,73 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "mocha": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "rules": {
+        "indent": [
+            "warn",
+            2,
+            { "SwitchCase": 1}
+        ],
+        "linebreak-style": [
+            "warn",
+            "unix"
+        ],
+        "quotes": [
+            "warn",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "no-console": [
+            "warn"
+        ],
+        "no-debugger": [
+            "warn"
+        ],
+        "no-extra-boolean-cast": [
+            "off"
+        ],
+        "no-inner-declarations": [
+            "off"
+        ],
+        "no-irregular-whitespace": [
+            "off"
+        ],
+        "no-template-curly-in-string": [
+            "error"
+        ],
+        "require-jsdoc": [
+            "warn"
+        ],
+        "implicit-arrow-linebreak": [
+            "warn",
+            "beside"
+        ],
+        "brace-style": [
+            "error", "stroustrup", {"allowSingleLine": false}
+        ],
+        "arrow-body-style": [
+            "warn",
+            "always"
+        ],
+        "global-require": [
+            "error"
+        ],
+        "one-var": [
+            "error",
+            "never"
+        ],
+        "handle-callback-err": [
+            "warn",
+            "^.*(e|E)rr"
+        ]
+    }
+}
