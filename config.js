@@ -1,15 +1,21 @@
 const appsDirectoriesPath = "./apps";
-const apps = ['users'];
+const apps = ['employee'];
 
 const root = __dirname;
 
-const database = {
-    user:'postgres',
-    password:"postgres",
-    host:"localhost",
-    port:5432,
-    schema:"testdb",
-};
+
+const redis1 = {
+    Client:{
+        url:'redis://localhost:6379',
+    },
+    selectDB:0
+}
+const redis2 = {
+    Client:{
+        url:'redis://localhost:6379',
+    },
+    selectDB:1
+}
 
 const router = {
   eventName: "event",
@@ -20,7 +26,7 @@ const storage = {
 }
 
 const server = {
-    port: process.env.PORT ?? 81,
+    port: process.env.PORT ?? 8000,
     hostname: process.env.HOST ?? "127.0.0.1",
     eventName: "event",
 }
@@ -37,7 +43,8 @@ module.exports = {
     appsDirectoriesPath,
     apps,
     root,
-    database,
+    redis1,
+    redis2,
     router,
     storage,
     server,

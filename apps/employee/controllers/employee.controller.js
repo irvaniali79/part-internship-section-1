@@ -1,16 +1,32 @@
-const {app} = require('../../..');
+const employeeRepository = require('../repositories/employeeRepository');
 
-async function addEmployee(req,res,queryParams){
+async function add(req,res){
+  const {id,data,parent} = req.body;
+  await employeeRepository.insert({id,data,parentId:parent});
+  res.response(JSON.stringify({
+    status:'success',
+    message:'you data cached successfully'
+
+  }));
+}
+
+async function get(){
   
 }
 
-async function getEmployee(req,res,queryParams){
-  
+async function edit(req,res){
+  const {id,data,parent} = req.body;
+  await employeeRepository.update({id,data,parentId:parent});
+  res.response(JSON.stringify({
+    status:'success',
+    message:'you data changed successfully'
+
+  }));
 }
-
-
 
 module.exports = {
-  addEmployee,
-  getEmployee
+  add,
+  get,
+  edit
+
 };

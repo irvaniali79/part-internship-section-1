@@ -1,4 +1,4 @@
-const router = require('./routes');
+require('./routes');
 
 
 
