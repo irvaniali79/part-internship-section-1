@@ -2,11 +2,10 @@ const {app} = require('../..');
 const employeeController = require('./controllers/employee.controller');
 const middlewares = require('../../middlewares');
 
-app.router.group('users',()=>{
     
-    app.router.addRoute('/dataService',employeeController.addEmployee,'POST').middleware([middlewares.fetchFromBody]);
-    app.router.addRoute('/dataService/@',employeeController.getEmployee,'GET');
+app.router.addRoute('/dataService',employeeController.add,'POST').middleware([middlewares.fetchFromBody]);
+app.router.addRoute('/dataService',employeeController.get,'GET');
+app.router.addRoute('/dataService',employeeController.edit,'PUT').middleware([middlewares.fetchFromBody]);
+
 
   
-
-})
