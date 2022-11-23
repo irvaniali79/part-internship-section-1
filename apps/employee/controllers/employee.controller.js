@@ -5,13 +5,17 @@ async function add(req,res){
   await employeeRepository.insert({id,data,parentId:parent});
   res.response(JSON.stringify({
     status:'success',
-    message:'you data cached successfully'
+    message:'your data cached successfully'
 
   }));
 }
 
-async function get(){
-  
+async function get(req,res,queryParams){
+  const result = await employeeRepository.fetch(queryParams[0]);
+  res.response(JSON.stringify({
+    status:'success',
+    data:result
+  }));
 }
 
 async function edit(req,res){
@@ -19,7 +23,7 @@ async function edit(req,res){
   await employeeRepository.update({id,data,parentId:parent});
   res.response(JSON.stringify({
     status:'success',
-    message:'you data changed successfully'
+    message:'your data changed successfully'
 
   }));
 }
