@@ -8,23 +8,24 @@ async function insertParent({id,data}){
 
   const parentExists = await app.services.userData.exists(parentId);
   if(parentExists)throw new uniquenessError('parent');
-  await app.services.userData.set('parent:'+id,JSON.stringify(data));
+  await app.services.userData.set(parentId,JSON.stringify(data));
   return 'data stored successfully';
 }
 
 async function insert({id,data,parentId}){
   try {
     const userId = concatStrWithNum('user:',id);
+    const pId = concatStrWithNum('parent:',parentId);
     const [userExists,parentExists] = await Promise.all([
       app.services.userData.exists(userId),
-      app.services.userParent.exists(id)
+      app.services.userData.exists(pId)
     ]);
     
     if(userExists)throw new uniquenessError('user');
     if(!parentExists)throw new notExistsError('parent');
 
     const [[,_data],] = await Promise.all([
-      app.services.userData.multi().set(userId, JSON.stringify(data)).get(userId),
+      app.services.userData.multi().set(userId, JSON.stringify(data)).get(userId).exec(),
       app.services.userParent.set(id, parentId)
     ]);
 
@@ -78,8 +79,8 @@ async function update({id,data,parentId}){
       app.services.userData.exists(userId),
       app.services.userParent.exists(id)
     ]);
-    if(userExists)throw new notExistsError('user');
-    if(parentExists)throw new notExistsError('parent');
+    if(!userExists)throw new notExistsError('user');
+    if(!parentExists)throw new notExistsError('parent');
 
     const pId = await app.services.userParent.get(id);
       
@@ -99,7 +100,7 @@ async function update({id,data,parentId}){
     return JSON.parse(result);
   }
   catch (error) {
-    if (error.code != 'uniqueness' && error.code != 'wrong-param'){
+    if (error.code != 'existence' && error.code != 'wrong-param'){
       error.code = 'database';
       error.message = 'database connection is failed';
     }
