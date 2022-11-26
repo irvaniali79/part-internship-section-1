@@ -4,27 +4,32 @@ const uniquenessError = require('../errorexceptions/uniquenessError');
 
 async function insert({id,data,parentId}){
   try {
-    let result;
     
     if (parentId == undefined){
-      result = await app.services.redis1.exists('parent:'+id);
-      if(result){
-        throw new uniquenessError('parent');
-      }
-      await app.services.redis1.set('parent:'+id,JSON.stringify(data));
+      const parentExists = await app.services.userData.exists('parent:'+id);
+      if(parentExists)throw new uniquenessError('parent');
+      await app.services.userData.set('parent:'+id,JSON.stringify(data));
       return 'data stored successfully';
     }
+    const [userExists,parentExists] = await Promise.all([
+      app.services.userData.exists('user:'+id),
+      app.services.userParent.exists(id)
+    ]);
+    
+    if(userExists)throw new uniquenessError('user');
+    if(!parentExists)throw new notExistsError('parent');
 
-    result = await app.services.redis1.exists('user:'+id);
-    if(result){
-      throw new uniquenessError('user');
-    }
-    result = await app.services.redis1.exists('parent:'+parentId);
-    if(!result){
-      throw new notExistsError('parent');
-    }
-    await app.services.redis1.set('user:'+id, JSON.stringify(data));
-    await app.services.redis2.set(id, parentId);
+    const [[,_data],] = await Promise.all([
+      app.services.userData.multi().set('user:'+id, JSON.stringify(data)).get('user:'+id),
+      app.services.userParent.set(id, parentId)
+    ]);
+
+    return {
+      id,
+      data:JSON.parse(_data),
+      parent:parentId
+    };
+    
   }
   catch (error) {
     if (error.code != 'uniqueness' && error.code != 'existence'){
@@ -36,13 +41,14 @@ async function insert({id,data,parentId}){
 }
 async function fetch({id}){
   try {
-    let result;
-    result = await app.services.redis1.exists('user:'+id);
-    if(!result){
-      throw new notExistsError('user');
-    }
-    const data = await app.services.redis1.get('user:'+id);
-    const parentId = await app.services.redis2.get(id);
+
+    const userExists = await app.services.userData.exists('user:'+id);
+    if(!userExists)throw new notExistsError('user');
+
+    const [data,parentId] = await Promise.all([
+      app.services.userData.get('user:'+id),
+      app.services.userParent.get(id)
+    ]);
     return {
       id,
       data:JSON.parse(data),
@@ -61,23 +67,23 @@ async function fetch({id}){
 
 async function update({id,data,parentId}){
   try {
-    let result;
-    result = await app.services.redis1.exists('user:'+id);
-    if(!result){
-      throw new notExistsError('user');
-    }
-    result = await app.services.redis2.exists(id);
-    if(!result){
-      throw new notExistsError('user');
-    }
-    const pId = await app.services.redis2.get(id);
+    const [userExists,parentExists] = await Promise.all([
+      app.services.userData.exists('user:'+id),
+      app.services.userParent.exists(id)
+    ]);
+    if(userExists)throw new notExistsError('user');
+    if(parentExists)throw new notExistsError('parent');
+
+    const pId = await app.services.userParent.get(id);
+      
+
     if( pId != parentId ){
       const error = new Error('wrong parent id given');
       error.code = 'wrong-param';
       throw Error();
     }
-    let tmp;
-    [tmp,result] = await app.services.redis1
+
+    const [,result] = await app.services.userData
       .multi()
       .set('user:'+id,JSON.stringify(data))
       .get('user:'+id)

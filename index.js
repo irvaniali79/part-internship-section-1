@@ -12,13 +12,14 @@ const errorHandler = require('./handlers/errorHandler/errorHandler');
 const app = new brogrammers(eventEmitter,undefined,config,responseHandler,errorHandler);
 
 app.use('logger',new LoggerFacade({driver:'file',filePath:config.root+'/log.txt'}));
-app.use('redis1',createClient(config.redis1.Client));
-app.use('redis2',createClient(config.redis2.Client));
+app.use('userData',createClient(config.userData.Client));
+app.use('userParent',createClient(config.userParent.Client));
 
 app.services.userData.connect();
-app.services.userData.select(config.redis1.selectDB);
+app.services.userData.select(config.userData.selectDB);
+
 app.services.userParent.connect();
-app.services.userParent.select(config.redis2.selectDB);
+app.services.userParent.select(config.userParent.selectDB);
 
 module.exports = {
   eventEmitter,

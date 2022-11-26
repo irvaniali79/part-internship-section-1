@@ -4,13 +4,13 @@ const apps = ['employee'];
 const root = __dirname;
 
 
-const redis1 = {
+const userData = {
     Client:{
         url:'redis://localhost:6379',
     },
     selectDB:0
 }
-const redis2 = {
+const userParent = {
     Client:{
         url:'redis://localhost:6379',
     },
@@ -43,8 +43,8 @@ module.exports = {
     appsDirectoriesPath,
     apps,
     root,
-    redis1,
-    redis2,
+    userData,
+    userParent,
     router,
     storage,
     server,
