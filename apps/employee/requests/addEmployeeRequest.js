@@ -9,9 +9,6 @@ const addEmpSchema = {
     },
     data: {
       type: 'object',
-      properties: {
-
-      }
     },
     parent: {
       type: 'string',

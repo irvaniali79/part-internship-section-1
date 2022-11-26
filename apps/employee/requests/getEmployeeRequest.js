@@ -1,13 +1,13 @@
-async function getEmployeeRequest(req, res, next) {
+async function getEmployeeRequest(req, res) {
   try {
-
-    let isNumber = Number(req.routerParams[0])
+    Number(req.routerParams[0]);
     return req;
-  } catch (e) {
-    res.writeHead(400, { "Content-Type": "application/json" });
+  }
+  catch (e) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(
       JSON.stringify({
-        message: "oops! Something went wrong!",
+        message: 'oops! Something went wrong!',
         addtionalInfo: JSON.parse(e.message),
       })
     );
