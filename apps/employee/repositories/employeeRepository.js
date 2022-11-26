@@ -1,18 +1,22 @@
 const { app } = require('../../..');
 const notExistsError = require('../errorexceptions/notExistsError');
 const uniquenessError = require('../errorexceptions/uniquenessError');
+const { concatStrWithNum } = require('../utils/helper');
+
+async function insertParent({id,data}){
+  const parentId = concatStrWithNum('parent:',id);
+
+  const parentExists = await app.services.userData.exists(parentId);
+  if(parentExists)throw new uniquenessError('parent');
+  await app.services.userData.set('parent:'+id,JSON.stringify(data));
+  return 'data stored successfully';
+}
 
 async function insert({id,data,parentId}){
   try {
-    
-    if (parentId == undefined){
-      const parentExists = await app.services.userData.exists('parent:'+id);
-      if(parentExists)throw new uniquenessError('parent');
-      await app.services.userData.set('parent:'+id,JSON.stringify(data));
-      return 'data stored successfully';
-    }
+    const userId = concatStrWithNum('user:',id);
     const [userExists,parentExists] = await Promise.all([
-      app.services.userData.exists('user:'+id),
+      app.services.userData.exists(userId),
       app.services.userParent.exists(id)
     ]);
     
@@ -20,7 +24,7 @@ async function insert({id,data,parentId}){
     if(!parentExists)throw new notExistsError('parent');
 
     const [[,_data],] = await Promise.all([
-      app.services.userData.multi().set('user:'+id, JSON.stringify(data)).get('user:'+id),
+      app.services.userData.multi().set(userId, JSON.stringify(data)).get(userId),
       app.services.userParent.set(id, parentId)
     ]);
 
@@ -39,14 +43,16 @@ async function insert({id,data,parentId}){
     throw error;
   }
 }
+
 async function fetch({id}){
   try {
+    const userId = concatStrWithNum('user:',id);
 
-    const userExists = await app.services.userData.exists('user:'+id);
+    const userExists = await app.services.userData.exists(userId);
     if(!userExists)throw new notExistsError('user');
 
     const [data,parentId] = await Promise.all([
-      app.services.userData.get('user:'+id),
+      app.services.userData.get(userId),
       app.services.userParent.get(id)
     ]);
     return {
@@ -64,11 +70,12 @@ async function fetch({id}){
   }
 }
 
-
 async function update({id,data,parentId}){
   try {
+    const userId = concatStrWithNum('user:',id);
+
     const [userExists,parentExists] = await Promise.all([
-      app.services.userData.exists('user:'+id),
+      app.services.userData.exists(userId),
       app.services.userParent.exists(id)
     ]);
     if(userExists)throw new notExistsError('user');
@@ -85,8 +92,8 @@ async function update({id,data,parentId}){
 
     const [,result] = await app.services.userData
       .multi()
-      .set('user:'+id,JSON.stringify(data))
-      .get('user:'+id)
+      .set(userId,JSON.stringify(data))
+      .get(userId)
       .exec();
     
     return JSON.parse(result);
@@ -100,6 +107,7 @@ async function update({id,data,parentId}){
   }
 }
 module.exports = {
+  insertParent,
   insert,
   fetch,
   update
