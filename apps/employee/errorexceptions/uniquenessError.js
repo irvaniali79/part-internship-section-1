@@ -1,7 +1,7 @@
 module.exports = class uniquenessError extends Error{
-  constructor(){
+  constructor(msg){
     super();
-    this.message = 'user already exist';
+    this.message = `${msg} already exist`;
     this.code = 'uniqueness';
   }
 };

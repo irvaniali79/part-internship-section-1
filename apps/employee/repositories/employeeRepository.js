@@ -6,24 +6,24 @@ async function insert({id,data,parentId}){
   try {
     let result;
     
-    if (parentId != undefined){
+    if (parentId == undefined){
       result = await app.services.redis1.exists('parent:'+id);
-      if(!result){
-        throw new uniquenessError();
+      if(result){
+        throw new uniquenessError('parent');
       }
       await app.services.redis1.set('parent:'+id,JSON.stringify(data));
       return 'data stored successfully';
     }
 
     result = await app.services.redis1.exists('user:'+id);
-    if(!result){
-      throw new uniquenessError();
+    if(result){
+      throw new uniquenessError('user');
     }
     result = await app.services.redis1.exists('parent:'+parentId);
     if(!result){
       throw new notExistsError('parent');
     }
-
+    await app.services.redis1.set('user:'+id, JSON.stringify(data));
     await app.services.redis2.set(id, parentId);
   }
   catch (error) {
@@ -36,35 +36,57 @@ async function insert({id,data,parentId}){
 }
 async function fetch({id}){
   try {
-    const data = await app.services.redis1.get(id);
+    let result;
+    result = await app.services.redis1.exists('user:'+id);
+    if(!result){
+      throw new notExistsError('user');
+    }
+    const data = await app.services.redis1.get('user:'+id);
     const parentId = await app.services.redis2.get(id);
     return {
       id,
-      data,
+      data:JSON.parse(data),
       parent:parentId
     };
   }
   catch (error) {
-    error.code = 'database';
-    error.message = 'your data is not exist or database connection is failed';
+    if (error.code != 'existence'){
+      error.code = 'database';
+      error.message = 'database connection is failed';
+    }
     throw error;
   }
 }
 
 
-async function update({id,data}){
+async function update({id,data,parentId}){
   try {
-    let result = await app.services.redis1.exists(id);
-    if(result){
-      await app.services.redis1.set(id,data);
-      return; 
+    let result;
+    result = await app.services.redis1.exists('user:'+id);
+    if(!result){
+      throw new notExistsError('user');
     }
-    const e = new Error('user is not exist');
-    e.code = 'uniqueness';
-    throw e;
+    result = await app.services.redis2.exists(id);
+    if(!result){
+      throw new notExistsError('user');
+    }
+    const pId = await app.services.redis2.get(id);
+    if( pId != parentId ){
+      const error = new Error('wrong parent id given');
+      error.code = 'wrong-param';
+      throw Error();
+    }
+    let tmp;
+    [tmp,result] = await app.services.redis1
+      .multi()
+      .set('user:'+id,JSON.stringify(data))
+      .get('user:'+id)
+      .exec();
+    
+    return JSON.parse(result);
   }
   catch (error) {
-    if (error.code != 'uniqueness'){
+    if (error.code != 'uniqueness' && error.code != 'wrong-param'){
       error.code = 'database';
       error.message = 'database connection is failed';
     }

@@ -11,7 +11,7 @@ async function add(req,res){
 }
 
 async function get(req,res,queryParams){
-  const result = await employeeRepository.fetch(queryParams[0]);
+  const result = await employeeRepository.fetch({id:queryParams[0]});
   res.response(JSON.stringify({
     status:'success',
     data:result
@@ -20,11 +20,11 @@ async function get(req,res,queryParams){
 
 async function edit(req,res){
   const {id,data,parent} = req.body;
-  await employeeRepository.update({id,data,parentId:parent});
+  const result = await employeeRepository.update({id,data,parentId:parent});
   res.response(JSON.stringify({
     status:'success',
-    message:'your data changed successfully'
-
+    message:'your data changed successfully',
+    data : result
   }));
 }
 
