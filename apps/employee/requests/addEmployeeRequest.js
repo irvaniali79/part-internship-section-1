@@ -1,20 +1,20 @@
-const Ajv = require("ajv");
+const Ajv = require('ajv');
 const ajv = new Ajv({ allErrors: true });
 
 const addEmpSchema = {
-  type: "object",
+  type: 'object',
   properties: {
     id: {
-      type: "string",
+      type: 'string',
     },
     data: {
-      type: "object",
+      type: 'object',
       properties: {
 
       }
     },
     parent: {
-      type: "string",
+      type: 'string',
     }
   },
   required:['id','data'],
@@ -29,12 +29,13 @@ async function addEmployeeRequest(req, res, next) {
     if (!validReq)
       throw new Error(JSON.stringify(ajv.errors));
     return req;
-  } catch (e) {
+  }
+  catch (e) {
   
-    res.writeHead(400, { "Content-Type": "application/json" });
+    res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(
       JSON.stringify({
-        message: "oops! Something went wrong!",
+        message: 'oops! Something went wrong!',
         addtionalInfo: JSON.parse(e.message),
       })
     );
