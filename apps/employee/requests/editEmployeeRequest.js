@@ -21,7 +21,7 @@ const editEmpSchema = {
 async function editEmployeeRequest(req, res, next) {
   try {
 
-    const validReq = ajv.validate(editEmpSchema, req.files);
+    const validReq = ajv.validate(editEmpSchema, req.body);
 
     if (!validReq)
       throw new Error(JSON.stringify(ajv.errors));
