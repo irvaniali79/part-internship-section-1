@@ -3,7 +3,7 @@ const { LoggerFacade } = require('brogrammers_logger');
 const { createClient } = require('redis');
 const EE = require('eventemitter3');
 
-const config = require('./config');
+const config = require('./project-config');
 
 const eventEmitter = new EE();
 const responseHandler = require('./handlers/responseHandler/responseHandler');
