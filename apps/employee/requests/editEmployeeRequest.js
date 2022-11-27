@@ -28,14 +28,8 @@ async function editEmployeeRequest(req, res, next) {
     return req;
   }
   catch (e) {
-  
-    res.writeHead(400, { 'Content-Type': 'application/json' });
-    res.end(
-      JSON.stringify({
-        message: 'oops! Something went wrong!',
-        addtionalInfo: JSON.parse(e.message),
-      })
-    );
+    e.code = 400;
+    throw e;
   }
 }
 
