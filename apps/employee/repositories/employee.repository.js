@@ -1,17 +1,31 @@
 const { app } = require('../../..');
 const notExistsError = require('../errorexceptions/notExistsError');
 const uniquenessError = require('../errorexceptions/uniquenessError');
+const notMatchError = require('../errorexceptions/notMatchError');
 const { concatStrWithNum } = require('../utils/helper');
 
 async function insertParent({id,data}){
-  const parentId = concatStrWithNum('parent:',id);
-  const parentExists = await app.services.userData.exists(parentId);
-  if(parentExists)throw new uniquenessError('parent');
-  const [,parentData] = await app.services.userData.multi().set(parentId,JSON.stringify(data)).get(parentId);
-  return {
-    id,
-    ...JSON.parse(parentData),
-  };
+  try {
+    const parentId = concatStrWithNum('parent:',id);
+    const parentExists = await app.services.userData.exists(parentId);
+    if(parentExists)throw new uniquenessError('parent');
+    const [,parentData] = await app.services.userData
+      .multi()
+      .set(parentId,JSON.stringify(data))
+      .get(parentId)
+      .exec();
+    return {
+      id,
+      ...JSON.parse(parentData),
+    };
+  }
+  catch (error) {
+    if (error.type != 'uniqueness' && error.type != 'existence'){
+      error.type = 'database';
+    }
+    throw error;
+  }
+  
 }
 
 async function insert({id,data,parentId}){
@@ -39,9 +53,8 @@ async function insert({id,data,parentId}){
     
   }
   catch (error) {
-    if (error.code != 'uniqueness' && error.code != 'existence'){
-      error.code = 'database';
-      error.message = 'database connection is failed';
+    if (error.type != 'uniqueness' && error.type != 'existence'){
+      error.type = 'database';
     }
     throw error;
   }
@@ -65,9 +78,8 @@ async function fetch({id}){
     };
   }
   catch (error) {
-    if (error.code != 'existence'){
-      error.code = 'database';
-      error.message = 'database connection is failed';
+    if (error.type != 'existence'){
+      error.type = 'database';
     }
     throw error;
   }
@@ -85,26 +97,23 @@ async function update({id,data,parentId}){
     if(!parentExists)throw new notExistsError('parent');
 
     const pId = await app.services.userParent.get(id);
-      
-
-    if( pId != parentId ){
-      const error = new Error('wrong parent id given');
-      error.code = 'wrong-param';
-      throw Error();
-    }
-
+    if( pId != parentId )throw new notMatchError('parentId');
     const [,result] = await app.services.userData
       .multi()
       .set(userId,JSON.stringify(data))
       .get(userId)
       .exec();
     
-    return JSON.parse(result);
+    return {
+      id,
+      parent:parentId,
+      ...JSON.parse(result)
+    };
+
   }
   catch (error) {
-    if (error.code != 'existence' && error.code != 'wrong-param'){
-      error.code = 'database';
-      error.message = 'database connection is failed';
+    if (error.type != 'existence' && error.type != 'notMatched'){
+      error.type = 'database';
     }
     throw error;
   }

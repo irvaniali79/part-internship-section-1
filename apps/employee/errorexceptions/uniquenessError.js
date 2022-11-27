@@ -2,6 +2,7 @@ module.exports = class uniquenessError extends Error{
   constructor(msg){
     super();
     this.message = `${msg} already exist`;
-    this.code = 'uniqueness';
+    this.type = 'uniqueness';
+    this.code = 403;
   }
 };

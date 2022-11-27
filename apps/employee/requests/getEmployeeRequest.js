@@ -5,7 +5,7 @@ async function getEmployeeRequest(req, res) {
     return req;
   }
   catch (e) {
-    e.code = 400;
+    e.type = 'bad input';
     throw e;
   }
 }
