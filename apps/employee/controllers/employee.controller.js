@@ -10,7 +10,7 @@ async function add(req,res){
 }
 
 async function get(req,res,queryParams){
-  const user = await employeeRepository.fetch({id:queryParams[0]});
+  const user = await employeeRepository.fetch({id:queryParams['id']});
   res.response(JSON.stringify(user));
 }
 

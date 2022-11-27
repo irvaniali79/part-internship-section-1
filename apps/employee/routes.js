@@ -4,7 +4,7 @@ const middlewares = require('../../middlewares');
 const { addEmployeeRequest, getEmployeeRequest, editEmployeeRequest } = require('./requests');
     
 app.router.addRoute('/dataService',employeeController.add,'POST').middleware([middlewares.fetchFromBody,addEmployeeRequest]);
-app.router.addRoute('/dataService/@',employeeController.get,'GET').middleware([getEmployeeRequest]);
+app.router.addRoute('/dataService/@id',employeeController.get,'GET').middleware([getEmployeeRequest]);
 app.router.addRoute('/dataService',employeeController.edit,'PUT').middleware([middlewares.fetchFromBody,editEmployeeRequest]);
 
 
