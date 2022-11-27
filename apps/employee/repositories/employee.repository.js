@@ -5,11 +5,13 @@ const { concatStrWithNum } = require('../utils/helper');
 
 async function insertParent({id,data}){
   const parentId = concatStrWithNum('parent:',id);
-
   const parentExists = await app.services.userData.exists(parentId);
   if(parentExists)throw new uniquenessError('parent');
-  await app.services.userData.set(parentId,JSON.stringify(data));
-  return 'data stored successfully';
+  const [,parentData] = await app.services.userData.multi().set(parentId,JSON.stringify(data)).get(parentId);
+  return {
+    id,
+    ...JSON.parse(parentData),
+  };
 }
 
 async function insert({id,data,parentId}){
@@ -31,8 +33,8 @@ async function insert({id,data,parentId}){
 
     return {
       id,
-      data:JSON.parse(_data),
-      parent:parentId
+      parent:parentId,
+      ...JSON.parse(_data)
     };
     
   }
@@ -58,7 +60,7 @@ async function fetch({id}){
     ]);
     return {
       id,
-      data:JSON.parse(data),
+      ...JSON.parse(data),
       parent:parentId
     };
   }
