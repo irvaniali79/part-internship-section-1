@@ -29,6 +29,7 @@ async function addEmployeeRequest(req, res, next) {
   }
   catch (e) {
     e.code = 400;
+    e.message = JSON.parse(e.message);
     throw e;
   }
 }

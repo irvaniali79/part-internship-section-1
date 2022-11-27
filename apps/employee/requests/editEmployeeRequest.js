@@ -14,7 +14,7 @@ const editEmpSchema = {
       type: 'string',
     }
   },
-  required:['id','data'],
+  required:['id','data','parent'],
   additionalProperties: false,
 };
 
@@ -29,6 +29,7 @@ async function editEmployeeRequest(req, res, next) {
   }
   catch (e) {
     e.code = 400;
+    e.message = JSON.parse(e.message);
     throw e;
   }
 }
