@@ -26,7 +26,7 @@ const storage = {
 }
 
 const server = {
-    port: process.env.PORT ?? 81,
+    port: process.env.PORT ?? 8000,
     hostname: process.env.HOST ?? "127.0.0.1",
     eventName: "event",
 }
