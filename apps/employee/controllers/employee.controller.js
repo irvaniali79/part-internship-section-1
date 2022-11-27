@@ -1,38 +1,23 @@
-const employeeRepository = require('../repositories/employeeRepository');
+const employeeRepository = require('../repositories/employee.repository');
 
 async function add(req,res){
   const {id,data,parent} = req.body;
-  
-  if (parent)await employeeRepository.insert({id,data,parentId:parent});
-  else await employeeRepository.insertParent({id,data});
-
+  let user;
+  if (parent) user = await employeeRepository.insert({id,data,parentId:parent});
+  else  user = await employeeRepository.insertParent({id,data});
   res.type('POST');
-  res.response(JSON.stringify({
-    status:'success',
-    message:'your data cached successfully'
-
-  }));
+  res.response(JSON.stringify(user));
 }
 
 async function get(req,res,queryParams){
-  const result = await employeeRepository.fetch({id:queryParams[0]});
-
-  res.type('GET');
-  res.response(JSON.stringify({
-    status:'success',
-    data:result
-  }));
+  const user = await employeeRepository.fetch({id:queryParams[0]});
+  res.response(JSON.stringify(user));
 }
 
 async function edit(req,res){
   const {id,data,parent} = req.body;
-  const result = await employeeRepository.update({id,data,parentId:parent});
-  res.type('PUT');
-  res.response(JSON.stringify({
-    status:'success',
-    message:'your data changed successfully',
-    data : result
-  }));
+  const updatedUser = await employeeRepository.update({id,data,parentId:parent});
+  res.response(JSON.stringify(updatedUser));
 }
 
 module.exports = {
