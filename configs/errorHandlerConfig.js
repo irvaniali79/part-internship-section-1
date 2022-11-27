@@ -28,5 +28,10 @@ module.exports = {
     code:400,
     message:'Id is required field',
     level:''
+  },
+  'wrong-parameter':{
+    code:403,
+    message:'parameter is wrong',
+    level:''
   }
 };
