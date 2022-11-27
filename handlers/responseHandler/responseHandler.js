@@ -8,7 +8,8 @@ function responseHandler(req,res){
     return;
   }
   if(res.type in responses){
-    responseResolver(res,responses[res.type]['headers'](res));
+    res.status = responses[res.type].status;
+    responseResolver(res,responses[res.type].headers?responses[res.type].headers(res):undefined);
     return;
   }
   responseResolver(res);
