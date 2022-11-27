@@ -24,4 +24,9 @@ module.exports = {
     message:'Bad gateway',
     level:''
   },
+  'bad input':{
+    code:400,
+    message:'Id is required field',
+    level:''
+  }
 };
