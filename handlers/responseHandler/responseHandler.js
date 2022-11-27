@@ -1,35 +1,17 @@
+const {responseResolver} = require('./helper');
+const responses = require('../../configs/responseHandlerConfig');
+
 /* eslint-disable require-jsdoc */
 function responseHandler(req,res){
-  const responses = {
-    'image/svg':()=>{
-      res.writeHead(res.status, { 'Content-Type': res.type });
-      res.end(res.response);
-    },
-    'pipe':()=>{
-      res.response.pipe(res);
-    },
-    'default':()=>{
-      res.writeHead(res.status, { 'Content-Type': 'application/json' });
-      res.end(res.response);
-    },
-    'POST':()=>{
-      res.writeHead(201, { 'Content-Type': 'application/json' });
-      res.end(res.response);
-    },
-    'GET':()=>{
-      res.writeHead(201, { 'Content-Type': 'application/json' });
-      res.end(res.response);
-    },
-    'PUT':()=>{
-      res.writeHead(201, { 'Content-Type': 'application/json' });
-      res.end(res.response);
-    }
-  };    
-  if(!(res.type in responses)){
-    responses['default']();
+  if(res.type == 'pipe'){
+    res.response.pipe(res);
+    return;
   }
-  responses[res.type]();
-  return;
+  if(res.type in responses){
+    responseResolver(res,responses[res.type]['headers'](res));
+    return;
+  }
+  responseResolver(res);
 }
 
 module.exports = responseHandler;
