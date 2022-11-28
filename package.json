@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "ajv": "^8.11.2",
-    "brogrammers": "^3.0.0",
+    "brogrammers": "^4.0.0",
     "brogrammers_logger": "^3.0.0",
     "eventemitter3": "^4.0.7",
     "redis": "^4.5.0"
