@@ -98,16 +98,21 @@ async function update({id,data,parentId}){
 
     const pId = await app.services.userParent.get(id);
     if( pId != parentId )throw new notMatchError('parentId');
-    const [,result] = await app.services.userData
+
+    const userBeforeUpdate = await app.services.userData.get(userId);
+    const [,updatedUser] = await app.services.userData
       .multi()
-      .set(userId,JSON.stringify(data))
+      .set(userId,JSON.stringify({
+        ...JSON.parse(userBeforeUpdate),
+        ...data
+      }))
       .get(userId)
       .exec();
     
     return {
       id,
       parent:parentId,
-      ...JSON.parse(result)
+      ...JSON.parse(updatedUser)
     };
 
   }
