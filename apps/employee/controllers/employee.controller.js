@@ -20,8 +20,15 @@ async function edit(req,res){
   res.response(JSON.stringify(updatedUser));
 }
 
+async function del(req,res,queryParams){
+  await employeeRepository.del({id:queryParams['id']});
+  res.type('DELETE');
+  res.response(JSON.stringify({}));
+}
+
 module.exports = {
   add,
   get,
-  edit
+  edit,
+  del
 };

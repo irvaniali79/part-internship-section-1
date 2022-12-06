@@ -9,5 +9,8 @@ module.exports = {
   },
   'POST':{
     status:'201'
+  },
+  'DELETE':{
+    status:'204'
   }
 };

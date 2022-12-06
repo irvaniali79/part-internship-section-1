@@ -123,9 +123,33 @@ async function update({id,data,parentId}){
     throw error;
   }
 }
+
+
+async function del({id}){
+  try {
+    const userId = concatStrWithNum('user:',id);
+    const [userDeleted,relationDeleted] = await Promise.all([
+      await app.services.userData.exists(userId),
+      await app.services.userParent.exists(id)
+    ]);
+    if (!(userDeleted||relationDeleted))throw new notExistsError('user or relation for user');
+    await Promise.all([
+      await app.services.userData.del(userId),
+      await app.services.userParent.del(id)
+    ]);
+  }
+  catch (error) {
+    if(error.type != 'existence') {
+      error.type = 'database';
+    }
+    throw error;
+  }
+
+}
 module.exports = {
   insertParent,
   insert,
   fetch,
-  update
+  update,
+  del
 };
