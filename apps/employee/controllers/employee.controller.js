@@ -26,9 +26,17 @@ async function del(req,res,queryParams){
   res.response(JSON.stringify({}));
 }
 
+async function getMyEmployee(req,res,queryParams){
+  const myEmployees = await employeeRepository.fetchEmployeesOf({id:queryParams.id});
+  res.response(JSON.stringify({
+    users:myEmployees
+  }));
+}
+
 module.exports = {
   add,
   get,
   edit,
-  del
+  del,
+  getMyEmployee
 };

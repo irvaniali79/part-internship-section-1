@@ -146,10 +146,50 @@ async function del({id}){
   }
 
 }
+
+async function fetchEmployeesOf({id}){
+  const parentId = concatStrWithNum('parent:',id);
+  try {
+    const parentIsExists = await app.services.userData.exists(parentId);
+    if(!parentIsExists)throw notExistsError('parent');
+
+    const users = await app.services.userParent.sendCommand(['KEYS','*']);
+
+    const employeeIdList = [];
+    for (const userId of users) {
+      let pId = await app.services.userParent.get(userId);
+      pId = concatStrWithNum('parent:',pId);
+      if(pId==parentId)employeeIdList.push(userId);
+    }
+   
+
+    let transaction = app.services.userData.multi();
+    
+    employeeIdList.forEach(id => {
+      const userId = concatStrWithNum('user:',id);
+      transaction = transaction.get(userId);
+    });
+
+    let employeeList = await transaction.exec();
+    employeeList.forEach((employee,index)=>{
+      employeeList[index] = JSON.parse(employee);
+    });
+
+    return employeeList;
+  }
+  catch (error) {
+    if(error.type != 'existence') {
+      error.type = 'database';
+    }
+    throw error;
+  }
+}
+
 module.exports = {
   insertParent,
   insert,
   fetch,
   update,
-  del
+  del,
+  fetchEmployeesOf
 };
