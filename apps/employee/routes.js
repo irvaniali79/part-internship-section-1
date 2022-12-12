@@ -6,7 +6,7 @@ app.router.addRoute('/dataService/',employeeController.add,'POST').middleware([a
 app.router.addRoute('/dataService/@id/',employeeController.get,'GET').middleware([getEmployeeRequest]);
 app.router.addRoute('/dataService/',employeeController.edit,'PUT').middleware([editEmployeeRequest]);
 
-app.router.addRoute('/dataService/@id/employees',employeeController.getMyEmployee,'GET');
+app.router.addRoute('/dataService/@id/employees',employeeController.getMyEmployees,'GET');
 
 app.router.addRoute('/dataService/remove/@id/',employeeController.del,'DELETE');
 

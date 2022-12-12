@@ -10,7 +10,10 @@ async function add(req,res){
 }
 
 async function get(req,res,queryParams){
-  const user = await employeeRepository.fetch({id:queryParams['id']});
+  const {type} = req.body;
+  let user;
+  if(type=='parent')user = await employeeRepository.fetchParent({id:queryParams['id']});
+  else user = await employeeRepository.fetchEmployee({id:queryParams['id']});
   res.response(JSON.stringify(user));
 }
 
@@ -26,7 +29,7 @@ async function del(req,res,queryParams){
   res.response(JSON.stringify({}));
 }
 
-async function getMyEmployee(req,res,queryParams){
+async function getMyEmployees(req,res,queryParams){
   const myEmployees = await employeeRepository.fetchEmployeesOf({id:queryParams.id});
   res.response(JSON.stringify({
     users:myEmployees
@@ -38,5 +41,5 @@ module.exports = {
   get,
   edit,
   del,
-  getMyEmployee
+  getMyEmployees
 };
