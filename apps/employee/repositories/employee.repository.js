@@ -59,10 +59,31 @@ async function insert({id,data,parentId}){
     throw error;
   }
 }
-
-async function fetch({id}){
+async function fetchParent({id}){
   try {
-    const userId = concatStrWithNum('user:',id);
+    const pId = concatStrWithNum('parent:',id);
+
+    const parentExists = await app.services.userData.exists(pId);
+    if(!parentExists)throw new notExistsError('parent');
+
+    const [data] = await Promise.all([
+      app.services.userData.get(pId),
+    ]);
+    return {
+      id,
+      ...JSON.parse(data),
+    };
+  }
+  catch (error) {
+    if (error.type != 'existence'){
+      error.type = 'database';
+    }
+    throw error;
+  }
+}
+async function fetchEmployee({id}){
+  try {
+    const userId = concatStrWithNum('parent:',id);
 
     const userExists = await app.services.userData.exists(userId);
     if(!userExists)throw new notExistsError('user');
@@ -127,15 +148,13 @@ async function update({id,data,parentId}){
 
 async function del({id}){
   try {
-    const userId = concatStrWithNum('user:',id);
-    const [userDeleted,relationDeleted] = await Promise.all([
-      await app.services.userData.exists(userId),
-      await app.services.userParent.exists(id)
+    const parentId = concatStrWithNum('parent:',id);
+    const [userDeleted] = await Promise.all([
+      await app.services.userData.exists(parentId),
     ]);
-    if (!(userDeleted||relationDeleted))throw new notExistsError('user or relation for user');
+    if (!(userDeleted))throw new notExistsError('parent');
     await Promise.all([
-      await app.services.userData.del(userId),
-      await app.services.userParent.del(id)
+      await app.services.userData.del(parentId),
     ]);
   }
   catch (error) {
@@ -188,7 +207,8 @@ async function fetchEmployeesOf({id}){
 module.exports = {
   insertParent,
   insert,
-  fetch,
+  fetchParent,
+  fetchEmployee,
   update,
   del,
   fetchEmployeesOf
