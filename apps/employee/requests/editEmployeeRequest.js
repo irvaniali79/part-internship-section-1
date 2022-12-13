@@ -14,7 +14,7 @@ const editEmpSchema = {
       type: 'string',
     }
   },
-  required:['id','data','parent'],
+  required:['id','data'],
   additionalProperties: false,
 };
 
