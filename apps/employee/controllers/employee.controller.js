@@ -10,7 +10,7 @@ async function add(req,res){
 }
 
 async function get(req,res,queryParams){
-  const {type} = req.body;
+  const {type} = req.querystring || {type:'employee'};
   let user;
   if(type=='parent')user = await employeeRepository.fetchParent({id:queryParams['id']});
   else user = await employeeRepository.fetchEmployee({id:queryParams['id']});
@@ -18,8 +18,12 @@ async function get(req,res,queryParams){
 }
 
 async function edit(req,res){
+  
   const {id,data,parent} = req.body;
-  const updatedUser = await employeeRepository.update({id,data,parentId:parent});
+  let updatedUser;
+  if(!parent) updatedUser = await employeeRepository.updateParent({id,data});
+  else updatedUser = await employeeRepository.updateEmployee({id,data,parentId:parent});
+
   res.response(JSON.stringify(updatedUser));
 }
 

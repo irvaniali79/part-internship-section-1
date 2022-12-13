@@ -106,7 +106,27 @@ async function fetchEmployee({id}){
   }
 }
 
-async function update({id,data,parentId}){
+async function updateParent({id,data}){
+  const pId = concatStrWithNum('parent:',id);
+  const parentExists = await app.services.userData.exists(pId);
+  if(!parentExists)throw new notExistsError('parent');
+  const userBeforeUpdate = await app.services.userData.get(pId);
+  
+  const [,updatedUser] = await app.services.userData
+    .multi()
+    .set(pId,JSON.stringify({
+      ...JSON.parse(userBeforeUpdate),
+      ...data
+    }))
+    .get(pId)
+    .exec();
+
+  return {
+    id,
+    ...JSON.parse(updatedUser)
+  };
+}
+async function updateEmployee({id,data,parentId}){
   try {
     const userId = concatStrWithNum('user:',id);
 
@@ -209,7 +229,8 @@ module.exports = {
   insert,
   fetchParent,
   fetchEmployee,
-  update,
+  updateEmployee,
+  updateParent,
   del,
   fetchEmployeesOf
 };
