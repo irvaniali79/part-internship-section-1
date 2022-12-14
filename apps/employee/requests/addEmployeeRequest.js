@@ -22,11 +22,12 @@ const addEmpSchema = {
             type:'object',
             properties:{
               job:{
-                type:"string"
+                type:'string'
               }
             }
           }
         },
+      },
       additionalProperties:false
     },
     parent: {
