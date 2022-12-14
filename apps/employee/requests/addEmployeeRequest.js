@@ -9,6 +9,25 @@ const addEmpSchema = {
     },
     data: {
       type: 'object',
+      properties:{
+        education:{type:'string'},
+        firstName:{type:'string'},
+        lastName:{type:'string'},
+        email:{type:'string'},
+        idNumber:{type:'string'},
+        gender:{type:'integer'},
+        jobs:{
+          type:'array',
+          items:{
+            type:'object',
+            properties:{
+              job:{
+                type:"string"
+              }
+            }
+          }
+        },
+      additionalProperties:false
     },
     parent: {
       type: 'string',
