@@ -8,6 +8,7 @@ const config = require('./project-config');
 const eventEmitter = new EE();
 const responseHandler = require('./handlers/responseHandler/responseHandler');
 const errorHandler = require('./handlers/errorHandler/errorHandler');
+const corsWrapper = require('./middlewares/cors');
 
 const app = new brogrammers(eventEmitter,undefined,config,responseHandler,errorHandler);
 
@@ -30,7 +31,7 @@ module.exports = {
 require('./handlers/log');
 
 
-
+app.server.middlewares.push(corsWrapper(config.server));
 app.serve();
 
 

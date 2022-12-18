@@ -3,7 +3,6 @@ const apps = ['employee'];
 
 const root = __dirname;
 
-
 const userData = {
     Client:{
         url:'redis://localhost:6379',
@@ -29,6 +28,7 @@ const server = {
     port: process.env.PORT ?? 8000,
     hostname: process.env.HOST ?? "127.0.0.1",
     eventName: "event",
+    origin : "localhost:4001",
 }
 
 const errorHandler = {
