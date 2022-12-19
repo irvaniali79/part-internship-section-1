@@ -190,7 +190,7 @@ async function fetchEmployeesOf({id}){
   const parentId = concatStrWithNum('parent:',id);
   try {
     const parentIsExists = await app.services.userData.exists(parentId);
-    if(!parentIsExists)throw notExistsError('parent');
+    if(!parentIsExists)throw new notExistsError('parent');
 
     const users = await app.services.userParent.sendCommand(['KEYS','*']);
 
