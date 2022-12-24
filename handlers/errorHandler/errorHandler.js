@@ -6,6 +6,9 @@ function errorHandler(req,res,e){
   else error = errors[e.type];
   res.writeHead(error.code, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({
+    meta:{
+      code:error.metaCode||'UNHANDLED'
+    },
     message:error.message
   }));
   
