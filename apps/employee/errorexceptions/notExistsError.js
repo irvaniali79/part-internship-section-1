@@ -4,5 +4,6 @@ module.exports = class notExistsError extends Error{
     this.message = `${message}  is not exists`;
     this.type = 'existence';
     this.code = 403;
+    this.metaCode = 'NOTEXISTS';
   }
 };
