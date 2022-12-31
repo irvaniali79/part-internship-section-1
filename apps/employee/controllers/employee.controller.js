@@ -10,19 +10,14 @@ async function add(req,res){
 }
 
 async function get(req,res,queryParams){
-  const {type} = req.querystring || {type:'employee'};
-  let user;
-  if(type=='parent')user = await employeeRepository.fetchParent({id:queryParams['id']});
-  else user = await employeeRepository.fetchEmployee({id:queryParams['id']});
+  const user = await employeeRepository.fetchParent({id:queryParams['id']});
   res.response(JSON.stringify(user));
 }
 
 async function edit(req,res){
   
-  const {id,data,parent} = req.body;
-  let updatedUser;
-  if(!parent) updatedUser = await employeeRepository.updateParent({id,data});
-  else updatedUser = await employeeRepository.updateEmployee({id,data,parentId:parent});
+  const {id,data} = req.body;
+  const updatedUser = await employeeRepository.updateParent({id,data});
 
   res.response(JSON.stringify(updatedUser));
 }

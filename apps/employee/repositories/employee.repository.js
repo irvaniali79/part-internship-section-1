@@ -30,7 +30,7 @@ async function insertParent({id,data}){
 
 async function insert({id,data,parentId}){
   try {
-    const userId = concatStrWithNum('user:',id);
+    const userId = concatStrWithNum(`user:${parentId}:`,id);
     const pId = concatStrWithNum('parent:',parentId);
     const [userExists,parentExists] = await Promise.all([
       app.services.userData.exists(userId),
@@ -42,7 +42,7 @@ async function insert({id,data,parentId}){
 
     const [[,_data],] = await Promise.all([
       app.services.userData.multi().set(userId, JSON.stringify(data)).get(userId).exec(),
-      app.services.userParent.set(id, parentId)
+      app.services.userParent.set(userId, parentId)
     ]);
 
     return {
@@ -81,30 +81,6 @@ async function fetchParent({id}){
     throw error;
   }
 }
-async function fetchEmployee({id}){
-  try {
-    const userId = concatStrWithNum('parent:',id);
-
-    const userExists = await app.services.userData.exists(userId);
-    if(!userExists)throw new notExistsError('user');
-
-    const [data,parentId] = await Promise.all([
-      app.services.userData.get(userId),
-      app.services.userParent.get(id)
-    ]);
-    return {
-      id,
-      ...JSON.parse(data),
-      parent:parentId
-    };
-  }
-  catch (error) {
-    if (error.type != 'existence'){
-      error.type = 'database';
-    }
-    throw error;
-  }
-}
 
 async function updateParent({id,data}){
   const pId = concatStrWithNum('parent:',id);
@@ -126,44 +102,7 @@ async function updateParent({id,data}){
     ...JSON.parse(updatedUser)
   };
 }
-async function updateEmployee({id,data,parentId}){
-  try {
-    const userId = concatStrWithNum('user:',id);
 
-    const [userExists,parentExists] = await Promise.all([
-      app.services.userData.exists(userId),
-      app.services.userParent.exists(id)
-    ]);
-    if(!userExists)throw new notExistsError('user');
-    if(!parentExists)throw new notExistsError('parent');
-
-    const pId = await app.services.userParent.get(id);
-    if( pId != parentId )throw new notMatchError('parentId');
-
-    const userBeforeUpdate = await app.services.userData.get(userId);
-    const [,updatedUser] = await app.services.userData
-      .multi()
-      .set(userId,JSON.stringify({
-        ...JSON.parse(userBeforeUpdate),
-        ...data
-      }))
-      .get(userId)
-      .exec();
-    
-    return {
-      id,
-      parent:parentId,
-      ...JSON.parse(updatedUser)
-    };
-
-  }
-  catch (error) {
-    if (error.type != 'existence' && error.type != 'notMatched'){
-      error.type = 'database';
-    }
-    throw error;
-  }
-}
 
 
 async function del({id}){
@@ -205,8 +144,7 @@ async function fetchEmployeesOf({id}){
     let transaction = app.services.userData.multi();
     
     employeeIdList.forEach(id => {
-      const userId = concatStrWithNum('user:',id);
-      transaction = transaction.get(userId);
+      transaction = transaction.get(id);
     });
 
     let employeeList = await transaction.exec();
@@ -228,8 +166,6 @@ module.exports = {
   insertParent,
   insert,
   fetchParent,
-  fetchEmployee,
-  updateEmployee,
   updateParent,
   del,
   fetchEmployeesOf

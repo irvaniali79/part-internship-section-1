@@ -1,10 +1,2 @@
-# Brogrammers
-node js framework 
-
-## usage
-
-- to install packages run
-` npm i `
-
-- to run package use
-` npm run serve `
+- [x] It would be great if we add parentID:employeeID to each employeeID to generate a relative uniqueness
+- [x] It would be better if we had code for all errors to handle another side

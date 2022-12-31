@@ -30,9 +30,6 @@ const editEmpSchema = {
       },
       additionalProperties:false
     },
-    parent: {
-      type: 'string',
-    }
   },
   required:['id','data'],
   additionalProperties: false,
