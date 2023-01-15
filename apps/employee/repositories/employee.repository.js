@@ -1,9 +1,14 @@
 const { app } = require('../../..');
 const notExistsError = require('../errorexceptions/notExistsError');
 const uniquenessError = require('../errorexceptions/uniquenessError');
-const notMatchError = require('../errorexceptions/notMatchError');
 const { concatStrWithNum } = require('../utils/helper');
 
+
+/**
+ * insert parent employee
+ * @param {{id:string,data:object}} data to insert on db includes of id as key and data as value
+ * @returns {Object} returns inserted parent 
+ */
 async function insertParent({id,data}){
   try {
     const parentId = concatStrWithNum('parent:',id);
@@ -27,7 +32,11 @@ async function insertParent({id,data}){
   }
   
 }
-
+/**
+ * insert simple employee
+ * @param {{id:string,data:object,parentId:string}} data to insert on db include of id as key and data as value
+ * @returns {Object} returns inserted employee 
+ */
 async function insert({id,data,parentId}){
   try {
     const userId = concatStrWithNum(`user:${parentId}:`,id);
@@ -59,6 +68,11 @@ async function insert({id,data,parentId}){
     throw error;
   }
 }
+/**
+ * fetch parent employee
+ * @param {{id:string}} id parent identifier
+ * @returns {Object} returns requested parent 
+ */
 async function fetchParent({id}){
   try {
     const pId = concatStrWithNum('parent:',id);
@@ -81,7 +95,11 @@ async function fetchParent({id}){
     throw error;
   }
 }
-
+/**
+ * update parent employee
+ * @param {{id:string,data:object,parentId:string}} id parent identifier
+ * @returns {Object} returns updated parent 
+ */
 async function updateParent({id,data}){
   const pId = concatStrWithNum('parent:',id);
   const parentExists = await app.services.userData.exists(pId);
@@ -104,7 +122,10 @@ async function updateParent({id,data}){
 }
 
 
-
+/**
+ * delete parent employee using id
+ * @param {{id:string}} id to delete specific employee using its id
+ */
 async function del({id}){
   try {
     const parentId = concatStrWithNum('parent:',id);
@@ -124,7 +145,11 @@ async function del({id}){
   }
 
 }
-
+/**
+ * get related employees for this specific parent
+ * @param {{id:string}} id parent identifier
+ * @returns {Array<Object>} returns list of employees 
+ */
 async function fetchEmployeesOf({id}){
   const parentId = concatStrWithNum('parent:',id);
   try {
